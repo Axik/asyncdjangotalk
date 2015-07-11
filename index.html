@@ -1,0 +1,444 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Асинхронные задания в Django</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=792, user-scalable=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<link rel="stylesheet" href="shower/themes/bright/styles/screen.css">
+</head>
+<body class="list">
+	<header class="caption">
+		<h1>Асинхронные задания в Django</h1>
+	</header>
+	<section class="slide cover" id="Cover"><div>
+		<h2>Асинхронные задания в Django</h2>
+		<p>Кирилл Перевозчиков @ DataRobot</p>
+		<p>github.com/Axik </p>
+		<!--
+			To apply styles to the certain slides
+			set slide ID to get needed elements
+			-->
+		<style>
+			#Cover {
+				background-color: #0C3C26;
+			}
+			#Cover h2 {
+				margin:30px 0 0;
+				color: #FFF;
+				text-align:center;
+				font-size:70px;
+				}
+			#Cover p {
+				margin:50px 0 0;
+				text-align:center;
+				color:#FFF;
+				font-style:italic;
+				font-size:20px;
+				}
+				#Cover p a {
+					color:#FFF;
+					}
+			#Cover img {
+				width:0.72em;
+				height:0.72em;
+				}
+		</style>
+	</div></section>
+	<section class="slide"><div>
+		<h2>О чём будет идти речь?</h2>
+		<ul>
+			<li>Какие существуют и поддерживаются?</li>
+			<li>Определим когда использовать то или иное исполнение</li>
+			<li>Преимущества & недостатки</li>
+			<li>Pro tips & trics (Maybe not so "Pro").</li>
+		</ol>
+		<p class="note">"Очереди задач" и "асинхронные очереди задач" - эти оба термина означают "Asynchronous task queue" в Django-мире.</p>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Нужно ли использовать очереди задач?</h2>
+		<figure>
+		<p class="note">Django блокирующийся фреймворк </p>
+		<p>Нужно, если в цикле request-response существует операция существенная повышающая время задержки ответа.</p>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Типичные примеры</h2>
+		<figure>
+			<ul>
+				<li>Рассылка электронных писем</li>
+				<li>Изменение файлов (также и работа с изображениями)</li>
+				<li>Вытягивание большого количества данных с third-party web-сервиса</li>
+				<li>Insert или Update большого количества объектов в БД</li>
+				<li>Выполнение времязатратных вычислений</li>
+				<li>Отправка или обработка web-hooks</li>
+			</ul>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Окей, Google</h2>
+		<h2>"Django task queue project"</h2>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Celery</h2>
+		<figure>
+		Pros:
+		<ul>
+			<li>Стандарт для Django</li>
+			<li>Можно использовать разные исполнения брокеров</li>
+			<li>Гибкий в настройке</li>
+			<li>Отлично подходит для больших проектов</li>
+		</ul>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Celery</h2>
+		<figure>
+		Cons:
+		<ul>
+			<li>Гибкий в настройке</li>
+			<li>Тяжеловесный: множество процессов + external dependencies</li>
+			<li>Неподходит для маленьких приложений</li>
+			<li>Исходный код нечитабелен. 27k lines</li>
+		</ul>
+		</figure>
+
+		
+	</div></section>
+	<section class="slide">
+		<h2>Celery</h2>
+		<p>
+			<img src="https://dl.dropboxusercontent.com/spa/x3hnf220lzqoaxi/dwc2l4vt.png">
+		</p>
+	</section>
+	<section class="slide">
+		<h2>Celery</h2>
+		<p>
+			<img src="https://dl.dropboxusercontent.com/spa/x3hnf220lzqoaxi/zxt11jub.png">
+		</p>
+	</section>
+	<section class="slide"><div>
+		<h2>Redis Queue</h2>
+		<figure>
+		Pros:
+		<ul>
+			<li>Гибкий в настройке</li>
+			<li>Менее требовательный к памяти, чем Celery</li>
+			<li>Отлично подходит для средних и маленьких проектов</li>
+			<li>3k lines. Прост и понятен.</li>
+		</ul>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Redis Queue</h2>
+		<figure>
+		Cons:
+		<ul>
+			<li>Только redis как брокер.</li>
+			<li>Менее гибкая система настройки очереди, чем Celery</li>
+			<li>Воркеры могут быть только Python.</li>
+			<li>Простые плюшки задач по расписанию или Django-админки отсутствуют из коробки.</li>
+		</ul>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Django-background-tasks</h2>
+		<figure>
+		Pros:
+		<ul>
+			<li>Очень прост в настройке</li>
+			<li>Очень прост в использовании</li>
+			<li>Не требует дополнительных зависимостей, использует
+			Django ORM как брокер.</li>
+			<li>Отлично подходит для прототипов, либо маленьких проектов</li>
+		</ul>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Django-background-tasks</h2>
+		<figure>
+		Cons:
+		<ul>
+			<li>Django ORM как брокер</li>
+		</ul>
+		</figure>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Какой же выбрать?</h2>
+		<figure>
+		<p>Сложная специальная логика для очереди, распределённая система воркеров?</p>
+		<h2>Celery</h2>
+
+		</figure>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Какой же выбрать?</h2>
+		<figure>
+		<p>Отсутствует специальная логика для очереди, не нужна распределённая система воркеров и хочется понимать исходный код библиотеки?</p>
+		<h2>Redis Queue + Django RQ + RQ-Scheduler</h2>
+
+		</figure>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Какой же выбрать?</h2>
+		<figure>
+		<p>Прототип на вчера, и не охота возиться с Redis?</p>
+		<h2>Django-background-task</h2>
+
+		</figure>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Celery case. RabbitMQ vs. Redis.</h2>
+		<figure>
+		<p>
+		RabbitMQ
+		<ul>
+			<li>Гибко настраиваемая маршрутизация</li>
+			<li>Persistent queues (Гарантированная доставка)</li>
+		</ul>
+
+		</p>
+
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Celery case. RabbitMQ vs. Redis.</h2>
+		<figure>
+		<p>
+		Redis
+			<ul><li>Высокая скорость обработки сообщений по сравнению с RabbitMQ
+		</li>
+		<li>Можно использовать одновременно и как key-value storage и как брокер в одной системе</li>
+		</ul>
+		</p>
+
+		</figure>
+	</div></section>
+	
+	<section class="slide"><div>
+		<h2>Celery case. RabbitMQ vs. Redis. </h2>
+		<h2>Winner?</h2>
+		<p>Redis, если:
+		<ul><li>
+			Хочется лёгкого деплоя без заморочек
+		</li>
+		<li>
+			Отсутствие гарантированной доставки не критично.
+		</li></ul></p>
+
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Celery case. RabbitMQ vs. Redis. </h2>
+		<h2>Winner?</h2>
+		<p>RabbitMQ, если:
+		<ul><li>
+			Гарантированная доставка критична
+		</li>
+		<li>
+			Хочется использовать стабильное, используемое решение с солидной технической базой.
+		</li>
+		<li>
+			Advanced routing.
+		</li></ul></p>
+
+
+
+	</div></section>
+
+	<section class="slide"><div>
+		<img src="http://fc08.deviantart.net/fs37/f/2008/248/a/4/the_cake_is_a_lie_by_theShad0w.png" width="25%">
+		<p>Redis не быстрее RabbitMQ</p>
+	</div></section>
+	<section class="slide"><div>
+		<h2>tasks.py</h2>
+		<pre>
+		<code>from celery import Celery</code>
+		<code>celery = Celery('tasks', broker='amqp://guest@localhost//') </code>
+		<code>#celery = Celery('tasks', broker='redis://localhost//') </code>
+		<code>
+			
+		</code>
+		<code>@celery.task</code>
+		<code>def newtask(somestr, dt, value):</code>
+		<code>    pass</code>
+		</pre>
+	</div></section>
+	<section class="slide"><div>
+		<h2>test.py</h2>
+		<pre>
+		<code>from tasks import newtask</code>
+		<code>from datetime import datetime</code>
+		<code>import time</code>
+		<code>
+		</code>
+		<code>dt = datetime.utcnow()</code>
+		<code>st_time = time.time()</code>
+		<code>for i in xrange(100000):</code>
+		<code>    newtask.delay('shortstring', dt, 67.8)</code>
+		<code>print(time.time() - st_time)</code>
+		</pre>
+	</div>
+	<style>
+	.slide code{
+		font-size: 14px;
+	}
+	</style></section>
+	<section class="slide"><div>
+		<h2>Запускаем celery worker</h2>
+		<pre>
+			<code>time celery -A tasks worker --loglevel=info  -f tasks.log --concurrency 1</code>
+		</pre>
+		</div>
+	</section>
+		<section class="slide" id="results_testing"><div>
+		<h2>Результаты</h2>
+		<figure>
+		<table>
+<thead>
+<tr>
+    <th>Операция</th>
+    <th>Попытка 1</th>
+    <th>Попытка 2</th>
+    <th>Попытка 3</th>
+    <th>Среднее</th>
+    <th>Цена одного сообщения</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>RabbitMQ - Добавление задачи в очередь</td>
+    <td>56.96</td>
+    <td>54.18</td>
+    <td>57.13</td>
+    <td>56.09</td>
+    <td>0.0005609</td>
+</tr>
+<tr>
+    <td>Redis - Добавление задачи в очередь</td>
+    <td>68.81</td>
+    <td>76.52</td>
+    <td>76.95</td>
+    <td>74.09</td>
+    <td>0.0007409</td>
+</tr>
+<tr>
+    <td>RabbitMQ - Обработка сообщения из очереди</td>
+    <td>122.406</td>
+    <td>132.55</td>
+    <td>195.885</td>
+    <td>150.28</td>
+    <td>0.0015028</td>
+</tr>
+<tr>
+    <td>Redis - Обработка сообщения из очереди</td>
+    <td>157.59</td>
+    <td>177.774</td>
+    <td>186.332</td>
+    <td>173.9</td>
+    <td>0.001739</td>
+</tr>
+</tbody>
+</table>
+<p>Время добавление в очередь RabbitMQ составляет 75% от времени Redis.</p>
+<p>Время обработки сообщения - 86%.</p>
+		</figure>
+		<style>
+		#results_testing {
+			font-size: 14px;
+		}
+		</style>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Pro tips & tricks.</h2>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Не используйте базу данных как брокер.</h2>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Используйте больше, чем одну очередь для разных задач</h2>
+		</figure>
+	</div></section>
+		<section class="slide"><div>
+		<h2>Храните результаты выполнения, только если они вам нужны</h2>
+		</figure>
+	</div></section>
+		<section class="slide"><div>
+		<h2>Не передавать Django-ORM объекты в задачу.</h2>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Старайтесь передавать json-serializeble данные в функцию-задачи.</h2>
+		</figure>
+	</div></section>
+		<section class="slide"><div>
+		<h2>Применяйте философию views.py для tasks.py</h2>
+		</figure>
+	</div></section>
+		<section class="slide"><div>
+		<h2>Отложенные задачи, не значит бесплатные</h2>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Monitoring</h2>
+		<ul>
+			<li>Flower для celery.</li>
+			<li>Django-rq для Redis Queue.</li>
+		</ul>
+		</figure>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Периодические очищайте "умершие" задачи</h2>
+		</figure>
+	</div></section>
+	<section class="slide"><div>
+		<h2>Используйте отдельную очередь для повтора задач с ошибкой</h2>
+		</figure>
+	</div></section>
+
+		
+	<section class="slide"><div>
+		<h2>Использованные ресурсы</h2>
+		<ul>
+			<li><a href=""></a>Two scoops of Django 1.8</li>
+			<li><a href="http://www.fullstackpython.com/task-queues.html">http://www.fullstackpython.com/task-queues.html</a></li>
+			<li><a href="http://www.minvolai.com/blog/2013/10/RabbitMQ-vs-Redis-as-Message-Brokers/rabbitmq-vs-redis-message-broker/">http://www.minvolai.com/blog/2013/10/RabbitMQ-vs-Redis-as-Message-Brokers/rabbitmq-vs-redis-message-broker/</a></li>
+			<li><a href="http://blog.langoor.mobi/django-celery-redis-vs-rabbitmq-message-broker/">
+				http://blog.langoor.mobi/django-celery-redis-vs-rabbitmq-message-broker/
+			</a></li>
+		</ul>
+		</div></section>
+		<section class="slide"><div>
+		<figure>
+		<img src="https://dl.dropboxusercontent.com/spa/x3hnf220lzqoaxi/41l77qii.png" width="55%">
+		</figure>
+	</div></section>
+		
+<section class="slide shout" id="SeeMore"><div>
+		<h2><img src="pictures/github.png" alt=""> <a href="https://github.com/Axik">Источник лекции на гитхабе</a></h2>
+		<style>
+			#Picture h2 {
+				color:#FFF;
+				}
+			#SeeMore h2 {
+				font-size:100px
+				}
+			#SeeMore img {
+				width:0.72em;
+				height:0.72em;
+				}
+		</style>
+	</div></section>
+	<div class="progress"><div></div></div>
+	<script src="shower/shower.min.js"></script>
+	<!-- Copyright © 2015 Web-academy.com -->
+	<!-- Photos by John Carey, fiftyfootshadows.net -->
+</body>
+</html>
